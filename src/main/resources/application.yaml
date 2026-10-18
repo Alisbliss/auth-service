@@ -15,3 +15,8 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+
+jwt:
+  secret: ${JWT_SECRET:my-super-secret-key-that-is-at-least-256-bits-long-12345}
+  access-expiration-ms: 900000
+  refresh-expiration-ms: 604800000
