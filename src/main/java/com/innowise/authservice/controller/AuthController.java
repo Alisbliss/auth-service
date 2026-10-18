@@ -1,5 +1,6 @@
 package com.innowise.authservice.controller;
 
+import com.innowise.authservice.dto.LoginRequest;
 import com.innowise.authservice.dto.RefreshRequest;
 import com.innowise.authservice.dto.RegisterRequest;
 import com.innowise.authservice.dto.TokenResponse;
@@ -33,5 +34,10 @@ public class AuthController {
     @PostMapping("/validate")
     public ResponseEntity<Boolean> validate(@RequestBody RefreshRequest request) {
         return ResponseEntity.ok(authService.validate(request.getRefreshToken()));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }

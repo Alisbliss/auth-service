@@ -1,5 +1,6 @@
 package com.innowise.authservice.service;
 
+import com.innowise.authservice.dto.LoginRequest;
 import com.innowise.authservice.dto.RegisterRequest;
 import com.innowise.authservice.dto.TokenResponse;
 import com.innowise.authservice.entity.UserCredential;
@@ -47,5 +48,19 @@ public class AuthService {
 
     public boolean validate(String token) {
         return jwtTokenProvider.validateToken(token);
+    }
+
+    public TokenResponse login(LoginRequest request) {
+        UserCredential credential = credentialRepository.findByLogin(request.getLogin())
+                .orElseThrow(() -> new RuntimeException("Invalid login or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), credential.getPassword())) {
+            throw new RuntimeException("Invalid login or password");
+        }
+
+        return TokenResponse.builder()
+                .accessToken(jwtTokenProvider.generateAccessToken(credential))
+                .refreshToken(jwtTokenProvider.generateRefreshToken(credential))
+                .build();
     }
 }
