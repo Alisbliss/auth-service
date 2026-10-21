@@ -4,10 +4,13 @@ import com.innowise.authservice.dto.LoginRequest;
 import com.innowise.authservice.dto.RegisterRequest;
 import com.innowise.authservice.dto.TokenResponse;
 import com.innowise.authservice.entity.UserCredential;
+import com.innowise.authservice.exception.ConflictException;
+import com.innowise.authservice.exception.UnauthorizedException;
 import com.innowise.authservice.repository.UserCredentialRepository;
 import com.innowise.authservice.security.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +23,7 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
         if (credentialRepository.existsByLogin(request.getLogin())) {
-            throw new RuntimeException("Login already exists");
+            throw new ConflictException("Login already exists: " + request.getLogin());
         }
         UserCredential credential = new UserCredential();
         credential.setLogin(request.getLogin());
@@ -32,13 +35,13 @@ public class AuthService {
 
     public TokenResponse refresh(String refreshToken) {
         if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("Invalid refresh token");
+            throw new UnauthorizedException("Invalid refresh token");
         }
         Claims claims = jwtTokenProvider.parseClaims(refreshToken);
         String login = claims.getSubject();
 
         UserCredential credential = credentialRepository.findByLogin(login)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UnauthorizedException("User not found: " + login));
 
         return TokenResponse.builder()
                 .accessToken(jwtTokenProvider.generateAccessToken(credential))
@@ -52,11 +55,10 @@ public class AuthService {
 
     public TokenResponse login(LoginRequest request) {
         UserCredential credential = credentialRepository.findByLogin(request.getLogin())
-                .orElseThrow(() -> new RuntimeException("Invalid login or password"));
+                .orElseThrow(() -> new BadCredentialsException("Invalid login or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), credential.getPassword())) {
-            throw new RuntimeException("Invalid login or password");
-        }
+            throw new BadCredentialsException("Invalid login or password");}
 
         return TokenResponse.builder()
                 .accessToken(jwtTokenProvider.generateAccessToken(credential))

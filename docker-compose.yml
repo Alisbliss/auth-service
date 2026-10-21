@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: auth-service-postgres
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+
+  auth:
+    build: .
+    container_name: auth-service-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: my-super-secret-key-that-is-at-least-256-bits-long-12345
+    ports:
+      - "8081:8081"
+
+volumes:
+  auth_postgres_data:

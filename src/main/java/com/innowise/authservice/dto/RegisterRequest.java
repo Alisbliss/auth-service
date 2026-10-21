@@ -10,12 +10,12 @@ import lombok.Setter;
 @Setter
 
 public class RegisterRequest {
-    @NotBlank
+    @NotBlank(message = "login must not be blank")
     private String login;
-    @NotBlank
+    @NotBlank(message = "password must not be blank")
     private String password;
-    @NotNull
+    @NotNull(message = "role must not be null")
     private Role role;
-    @NotNull
+    @NotNull(message = "userId must not be null")
     private Long userId;
 }
