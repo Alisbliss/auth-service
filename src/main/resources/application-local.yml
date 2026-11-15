@@ -3,3 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/authdb
     username: alesia
     password: ""
+
+services:
+  user:
+    url: http://localhost:8081

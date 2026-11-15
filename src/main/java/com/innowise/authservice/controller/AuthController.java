@@ -31,11 +31,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(request.getRefreshToken()));
     }
 
-    @PostMapping("/validate")
-    public ResponseEntity<Boolean> validate(@RequestBody RefreshRequest request) {
-        return ResponseEntity.ok(authService.validate(request.getRefreshToken()));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));

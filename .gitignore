@@ -31,3 +31,19 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local config ###
+application-local.yml
+
+.env
+*.env
+!.env.example
+
+*.pem
+*.b64
+private.pem
+public.pem
+private.b64
+public.b64
+
+*.log

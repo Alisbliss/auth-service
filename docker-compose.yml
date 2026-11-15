@@ -1,26 +1,33 @@
 services:
-  postgres:
+  postgres-auth:                          # ← было postgres
     image: postgres:16-alpine
-    container_name: auth-service-postgres
     environment:
       POSTGRES_DB: authdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
       - "5434:5432"
     volumes:
       - auth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d authdb"]
+      interval: 5s
+      retries: 10
 
   auth:
     build: .
-    container_name: auth-service-app
     depends_on:
-      - postgres
+      postgres-auth:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      JWT_SECRET: my-super-secret-key-that-is-at-least-256-bits-long-12345
+      DB_URL: jdbc:postgresql://postgres-auth:5432/authdb
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
     ports:
-      - "8081:8081"
+      - "8082:8082"
 
 volumes:
   auth_postgres_data:

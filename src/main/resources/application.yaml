@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
@@ -14,6 +14,7 @@ spring:
     enabled: true
 
 jwt:
-  secret: ${JWT_SECRET:my-super-secret-key-that-is-at-least-256-bits-long-12345}
+  private-key: ${JWT_PRIVATE_KEY}
+  public-key: ${JWT_PUBLIC_KEY}
   access-expiration-ms: 900000
   refresh-expiration-ms: 604800000

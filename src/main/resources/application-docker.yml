@@ -1,5 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/authdb
-    username: postgres
-    password: postgres
+    url: ${DB_URL:jdbc:postgresql://postgres-auth:5432/authdb}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+services:
+  user:
+    url: http://user-service:8081
