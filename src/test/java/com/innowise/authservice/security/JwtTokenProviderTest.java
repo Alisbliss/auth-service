@@ -41,7 +41,7 @@ JwtTokenProviderTest {
         Claims claims = provider.parseClaims(token);
 
         assertThat(claims.getSubject()).isEqualTo("test@example.com");
-        assertThat(claims.get("user_id", Integer.class)).isEqualTo(1);
+        assertThat(claims.get("userId", Integer.class)).isEqualTo(1);
         assertThat(claims.get("role", String.class)).isEqualTo("USER");
         assertThat(claims.get("type", String.class)).isEqualTo("access");
     }
