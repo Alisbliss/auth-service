@@ -18,3 +18,13 @@ jwt:
   public-key: ${JWT_PUBLIC_KEY}
   access-expiration-ms: 900000
   refresh-expiration-ms: 604800000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
